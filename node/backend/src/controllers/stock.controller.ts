@@ -34,6 +34,7 @@ export const StockHistoryController = async (req: Request, res: Response) => {
       name: longName,
       prices: stockHistoryPricing,
     }
+    res.status(200).json(stockHistoryResult);
   } catch (error: any) {
     let errorMessage = '';
     let errorStatus = 400;
@@ -44,9 +45,7 @@ export const StockHistoryController = async (req: Request, res: Response) => {
       errorMessage = 'Houve um erro ao consultar o historico da ação. Por favor, tente novamente mais tarde.'
     }
     res.status(errorStatus).json({errors: [errorMessage]});
-    console.log('error -> ', error)
   }
-  res.status(200).json(stockHistoryResult);
 }
 
 export const StockQuoteController = async (req: Request, res: Response) => {
@@ -62,6 +61,8 @@ export const StockQuoteController = async (req: Request, res: Response) => {
       lastPrice: regularMarketPrice,
       pricedAt: regularMarketTime,
     };
+
+    res.status(200).json(stockQuoteResponse);
   } catch (error: any) {
     let errorMessage = '';
     let errorStatus = 400;
@@ -72,17 +73,15 @@ export const StockQuoteController = async (req: Request, res: Response) => {
       errorMessage = 'Houve um erro ao consultar a cotação da ação. Por favor, tente novamente mais tarde.'
     }
     res.status(errorStatus).json({errors: [{msg: errorMessage}]});
-    console.log('error -> ', error)
   }
   // const stockQuote : StockQuote = {} as StockQuote;  
-  res.status(200).json(stockQuoteResponse);
 }
 
 export const StockCompareController = async (req: Request, res: Response) => {
   const stock_name = translateStockName(req.params.stock_name);
   const {stocks} = req.body;
   const stocksString = [stock_name, ...stocks].map((stock: string) => (translateStockName(stock))).join(',');
-  let stockCompareResponse : StockQuote[] = [{} as StockQuote];
+  let stockCompareResponse : StockQuote[] = [];
   try {
     const stockCompareConsult : any = await api.get(`quote/${stocksString}/`);
     const {results} = stockCompareConsult.data;
@@ -91,13 +90,28 @@ export const StockCompareController = async (req: Request, res: Response) => {
         throw new Error(stock.message);
       }
 
+      if (stock.regularMarketPrice === null) {
+        const erro = {
+          response: {
+            status: 404,
+            data: {
+              message: 'erro',
+            },
+          },
+        };
+
+        throw erro;
+      }
+
       stockCompareResponse.push({
         name: stock.longName,
         lastPrice: stock.regularMarketPrice,
         pricedAt: stock.regularMarketTime,
       });
     });
-  
+
+    res.status(201).json({lastPrices: stockCompareResponse});
+
   } catch (error: any) {
     let errorMessage : String  = '';
     let errorStatus = 400;
@@ -107,11 +121,8 @@ export const StockCompareController = async (req: Request, res: Response) => {
     } else if (error.toString().includes('encontramos')) {
       errorMessage = error.toString();
     } else {
-      console.log('error -> ', error)
       errorMessage = 'Houve um erro ao consultar a cotação da ação. Por favor, tente novamente mais tarde.'
     }
     res.status(errorStatus).json({errors: [{msg: errorMessage}]});
-    console.log('error -> ', error)
   }
-  res.status(201).json(stockCompareResponse);
 }
