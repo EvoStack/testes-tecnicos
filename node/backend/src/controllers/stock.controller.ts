@@ -55,12 +55,12 @@ export const StockQuoteController = async (req: Request, res: Response) => {
   try {
     const stockQuoteConsult : any = await api.get(`quote/${stock_name}/`);
     const {results, requestedAt} = stockQuoteConsult.data;
-    const {longName, regularMarketPrice, updatedAt} = results[0];
+    const {longName, regularMarketPrice, regularMarketTime} = results[0];
     
     stockQuoteResponse = {
       name: longName,
       lastPrice: regularMarketPrice,
-      pricedAt: updatedAt,
+      pricedAt: regularMarketTime,
     };
   } catch (error: any) {
     let errorMessage = '';
@@ -71,7 +71,7 @@ export const StockQuoteController = async (req: Request, res: Response) => {
     } else {
       errorMessage = 'Houve um erro ao consultar a cotação da ação. Por favor, tente novamente mais tarde.'
     }
-    res.status(errorStatus).json({errors: [errorMessage]});
+    res.status(errorStatus).json({errors: [{msg: errorMessage}]});
     console.log('error -> ', error)
   }
   // const stockQuote : StockQuote = {} as StockQuote;  
@@ -110,8 +110,8 @@ export const StockCompareController = async (req: Request, res: Response) => {
       console.log('error -> ', error)
       errorMessage = 'Houve um erro ao consultar a cotação da ação. Por favor, tente novamente mais tarde.'
     }
-    res.status(errorStatus).json({errors: [errorMessage]});
+    res.status(errorStatus).json({errors: [{msg: errorMessage}]});
     console.log('error -> ', error)
   }
-  res.status(200).json(stockCompareResponse);
+  res.status(201).json(stockCompareResponse);
 }
