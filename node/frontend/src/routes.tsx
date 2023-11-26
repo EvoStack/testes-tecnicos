@@ -10,7 +10,6 @@ const routes = () => (
       <Routes>
         <Route index element={<Dashboard />} />
         <Route path={"/stocks/:stockName"} element={<StocksDetails />} />
-        <Route path="/about" element={<Dashboard />} />
       </Routes>
     </QueryClientProvider>
   </BrowserRouter>
