@@ -1,26 +1,9 @@
 import { Chart } from "react-charts";
-import { format, compareAsc, subDays } from "date-fns";
-import { es, ru, ptBR } from "date-fns/locale";
+import { format } from "date-fns";
+import { ptBR } from "date-fns/locale";
 import { useMemo } from "react";
 
 export const StockChartComponent = ({ stockHistory }) => {
-  const primaryAxis = useMemo(
-    () => ({
-      getValue: (datum: { primary: string }) => datum.primary,
-    }),
-    []
-  );
-
-  const secondaryAxes = useMemo(
-    () => [
-      {
-        getValue: (datum: { value: number }) => datum.value,
-        elementType: "line",
-      },
-    ],
-    []
-  );
-
   const data = useMemo(
     () => [
       {
@@ -69,6 +52,23 @@ export const StockChartComponent = ({ stockHistory }) => {
       },
     ],
     [stockHistory]
+  );
+
+  const primaryAxis = useMemo(
+    () => ({
+      getValue: (datum: { primary: string }) => datum.primary,
+    }),
+    []
+  );
+
+  const secondaryAxes = useMemo(
+    () => [
+      {
+        getValue: (datum: { value: number }) => datum.value,
+        elementType: "line",
+      },
+    ],
+    []
   );
 
   return (

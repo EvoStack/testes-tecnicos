@@ -1,7 +1,7 @@
 import { useContext, useState } from "react";
 import { StockContext, StockContextProvider } from "./dashboard.context";
 import { Link } from "react-router-dom";
-import { format, compareAsc, subDays } from "date-fns";
+import { format } from "date-fns";
 import { Button } from "flowbite-react";
 
 function StockRow({ removeNameOnList }) {

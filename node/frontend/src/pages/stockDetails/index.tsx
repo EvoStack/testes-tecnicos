@@ -47,7 +47,9 @@ export function StocksDetails() {
               className="mx-auto h-96 self-center box-content"
               style={{ maxWidth: "90%" }}
             >
-              <StockChartComponent stockHistory={stockHistory} />
+              {!!stockHistory && (
+                <StockChartComponent stockHistory={stockHistory} />
+              )}
             </div>
           )}
         </>
